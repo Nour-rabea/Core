@@ -4,9 +4,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" type="image/png" href="media/favicon.png">
+  <link rel="icon" type="image/png" href="media/The LOGOO.png">
 
-  <title>maping data ...</title>
+  <title>Core Real Estate ...</title>
 
   <!-- jQuery-->
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
@@ -41,9 +41,14 @@
   <!-- Leaflet Markercluster layer support -->
   <script src="https://unpkg.com/leaflet.markercluster.layersupport@2.0.1/dist/leaflet.markercluster.layersupport.js"></script>
 
-  <!-- Leaflet control geocoder -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder@1.13.0/dist/Control.Geocoder.css" />
-  <script src="https://unpkg.com/leaflet-control-geocoder@1.13.0/dist/Control.Geocoder.js"></script>
+ <!-- Leaflet control geocoder -->
+ <link rel="stylesheet" href="leaflet-search-master\dist\leaflet-search.src.css" />
+ <script src="Search.js"></script>
+ <script src="leaflet-search-master\dist\leaflet-search.src.js"></script>
+
+ <!-- Leaflet Ruler-->
+ <link rel="stylesheet" href="leaflet-ruler-master\src\leaflet-ruler.css" />
+ <script src="leaflet-ruler-master\src\leaflet-ruler.js"></script> 
 
   <!-- Locate Control -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-locatecontrol/0.72.0/L.Control.Locate.min.css" />
@@ -61,7 +66,6 @@
 
   <!-- Material Icons -->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-
 </head>
 
 <body>
@@ -78,10 +82,8 @@
 	</script>
 
   <div class="loader">Loading...</div>
-  <div id="map">
-  </div>
-<button id="container" class="btn">Prices Analysis</button><button id="container1" class="btn" onclick="myFunction()">Urban planning</button><button id="container2" class="btn" onclick="myAction()">Master Plans</button>
-	
+  <div id="map"></div>
+<button id="container" class="btn">Prices Analysis</button>
 <table id="maptable" class="display"></table>
 	
   <script type="text/javascript">
@@ -91,68 +93,53 @@
       scrollWheelZoom: true,
       tap: false
     }).setView([30.02,31.55], 11); // default center is overridden by Google Sheet options and points
-	  
-  function myFun() {
-    map.flyTo([30.002088,30.969116], 15);
-  }
-  </script>
-
-<script>
-  var myImageLayer;
-
-  function myFunction() {
-    var imageUrl = 'media/layout.png';
-    var imageBounds = [[29.994293, 31.574531], [29.933195, 31.521640], [29.921658, 31.583310]];
-
-    if (myImageLayer) {
-      map.removeLayer(myImageLayer);
-      myImageLayer = null;
-    } else {
-      myImageLayer = L.imageOverlay(imageUrl, imageBounds);
-      myImageLayer.addTo(map);
-    }
-</script>
-
-<script>
-  var myImageLayer1;
-
-  function myAction() {
-    var imageUrl = 'media/LOGO.jpg';
-    var imageBounds = [[30.023187484365465, 31.527730225468716], [30.02228130251076, 31.61048047448948], [29.948535934252433, 31.60738527709509], [29.9492774586029, 31.528362226556002]];
-
-    if (myImageLayer1) {
-      map.removeLayer(myImageLayer1);
-      myImageLayer1 = null;
-    } else {
-      myImageLayer1 = L.imageOverlay(imageUrl, imageBounds);
-      myImageLayer1.addTo(map);
-    }
-</script>
+    var Esri_WorldGrayCanvas = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+      maxZoom: 16
+    }).addTo(map);
+    var TopPlusOpen_Grey = L.tileLayer('http://sgx.geodatenzentrum.de/wmts_topplus_open/tile/1.0.0/web_grau/default/WEBMERCATOR/{z}/{y}/{x}.png', {
+      maxZoom: 18
+    });
     
-    <script>
-  function addRowHandlers() {
-    var table = document.getElementById("maptable");
-    var rows = table.getElementsByTagName("tr");
-    for (i = 0; i < rows.length; i++) {
-      var currentRow = table.rows[i];
-      var createClickHandler = function(row) {
-        return function() {
-          ///console.log(e);
-          ///console.log($(this).html());
-          ///console.log($(e).html());
-          var lat = row.getElementsByTagName("td")[11].innerHTML;
-          var lon = row.getElementsByTagName("td")[12].innerHTML;
-              map.flyTo([lat,lon], 15, { animate:true, duration:3 } )
-          ///});
-          ///var cell = row.getElementsByTagName("td")[0];
-          ///var id = cell.innerHTML;
-          ///alert("id:" + id);
-        };
-      };
-      currentRow.onclick = createClickHandler(currentRow);
+//Leaflet layer control
+    var baseMaps = {
+      'Street Map': Esri_WorldGrayCanvas,
+      'Details Map': TopPlusOpen_Grey,
     }
+const apiKey = 'Stadia-Auth 30c612bc-8fb1-4418-8b7b-354f885c920d';
+    var overlayMaps = {
+      'Satellite': L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_satellite/{z}/{x}/{y}{r}.{ext}?api_key=30c612bc-8fb1-4418-8b7b-354f885c920d', {
+	minZoom: 0,
+	maxZoom: 20,
+	ext: 'jpg'
+      }
+)}
+
+//Json data search
+const searchLayer = L.geoJSON(Search, {
+  onEachFeature: function(feature, layer) {
+    layer.bindPopup(feature.properties.Project);
   }
-</script>
+});
+
+//control search
+const searchControl = new L.Control.Search({
+  layer: searchLayer,
+  zoom: "13",
+  propertyName: 'Project'
+}).setPosition('topright');
+map.addControl(searchControl);
+map.removeLayer(searchLayer);
+
+    //ruler
+    var options = {
+        position: 'bottomright',
+        lengthUnit: {
+            display: 'km',
+            label: 'Distance:',
+            decimal: 2,
+        },
+    };
+    </script>
 	
   <script type="text/javascript" src="./google-doc-url.js"></script>
   <script type="text/javascript" src="./scripts/constants.js"></script>
