@@ -130,13 +130,14 @@ $(window).on('load', function() {
           .bindPopup("<b>" + point['Project'] + '</b><br>' +
           point['Developer'] + '</b><br>' +
           (point['Image'] ? ('<img src="' + point['Image'] + '"><br>') : '') +
-          point['Hotline'] + '</b><br>' +
-          point['Website'] + '</b><br>' +
+          ///point['Hotline'] + '</b><br>' +
+          ///point['Website'] + '</b><br>' +
           point['Brochure'] + '</b><br>' +
-          point['Head Offices'] + '</b><br>' +
-          point['Area'] + '</b> Acre <br>');
+          ///point['Head Offices'] + '</b><br>' +
+          point['Area'] + '</b> Acre <br>')
           //point['BUA'])
-        ///.bindTooltip(point['Text'],{permanent: true, direction: 'right'});
+          .bindTooltip("<b>" + point['Project'] + '</b><br>' +
+            point['Developer'], {permanent: false, direction: 'right'});
 
         if (layers !== undefined && layers.length !== 1) {
           marker.addTo(layers[point.Group]);
@@ -164,7 +165,7 @@ $(window).on('load', function() {
 
         for (i in layers) {
           multilayerClusterSupport.checkIn(layers[i]);
-          layers[i].addTo(map);
+          layers[i];
         }
       }
 
@@ -190,74 +191,44 @@ $(window).on('load', function() {
         + getSetting('_pointsLegendIcon') + '"></i></span>');
     }
 
-    document.getElementById("container").onclick = displayTable;
+    //* */ Display table with active points if specified
+    var tableVisible = false; // Variable to track table visibility
+    var tableHeight = 40; // Default table height
+    var table; // Variable to hold the DataTable instance
+
+    document.getElementById("container").onclick = toggleTable;
     
-    function displayTable() {
-    // Display table with active points if specified
-    var columns = getSetting('_tableColumns').split(',')
-                  .map(Function.prototype.call, String.prototype.trim);
-
-    if (displayTable && columns.length > 1) {
-      tableHeight = trySetting('_tableHeight', 40);
-      if (tableHeight < 10 || tableHeight > 90) {tableHeight = 40;}
-      $('#map').css('height', (100 - tableHeight) + 'vh');
-      map.invalidateSize();
-
-      // Set background (and text) color of the table header
-      var colors = getSetting('_tableHeaderColor').split(',');
-      if (colors[0] != '') {
-        $('table.display').css('background-color', colors[0]);
-        if (colors.length >= 2) {
-          $('table.display').css('color', colors[1]);
-        }
+    function toggleTable() {
+      if (tableVisible) {
+        hideTable();
+        tableVisible = false;
+      } else {
+        showTable();
+        tableVisible = true;
       }
     }
-      // Update table every time the map is moved/zoomed or point layers are toggled
-      map.on('moveend', updateTable);
-      map.on('layeradd', updateTable);
-      map.on('layerremove', updateTable);
-
-      // Clear table data and add only visible markers to it
-      function updateTable() {
-        var pointsVisible = [];
-        for (i in points) {
-          if (map.hasLayer(layers[points[i].Group]) &&
-              map.getBounds().contains(L.latLng(points[i].Latitude, points[i].Longitude))) {
-            pointsVisible.push(points[i]);
+    
+    function showTable() {
+      var columns = getSetting('_tableColumns').split(',')
+      .map(Function.prototype.call, String.prototype.trim);
+    
+      if (columns.length > 1) {
+        tableHeight = trySetting('_tableHeight', 40);
+        if (tableHeight < 10 || tableHeight > 90) { tableHeight = 40; }
+    
+        $('#map').css('height', (100 - tableHeight) + 'vh'); // Adjust the map height
+        map.invalidateSize();
+    
+        var colors = getSetting('_tableHeaderColor').split(',');
+        if (colors[0] !== '') {
+          $('table.display').css('background-color', colors[0]);
+          if (colors.length >= 2) {
+            $('table.display').css('color', colors[1]);
           }
         }
-
-        tableData = pointsToTableData(pointsVisible);
-
-        table.clear();
-        table.rows.add(tableData);
-        table.draw();
-      }
-
-      // Convert Leaflet marker objects into DataTable array
-      function pointsToTableData(ms) {
-        var data = [];
-        for (i in ms) {
-          var a = [];
-          for (j in columns) {
-            a.push(ms[i][columns[j]]);
-          }
-          data.push(a);
-        }
-        return data;
-      }
-
-      // Transform columns array into array of title objects
-      function generateColumnsArray() {
-        var c = [];
-        for (i in columns) {
-          c.push({title: columns[i]});
-        }
-        return c;
-      }
-
       // Initialize DataTable
-      var table = $('#maptable').DataTable({
+      if (!$.fn.DataTable.isDataTable('#maptable')) {
+        table = $('#maptable').DataTable({
         paging: false,
         scrollCollapse: true,
         scrollY: 'calc(' + tableHeight + 'vh - 40px)',
@@ -265,7 +236,118 @@ $(window).on('load', function() {
         searching: false,
         columns: generateColumnsArray(),
       });
+
+            // Show the DataTable
+            $('#maptable').show(); // Make sure the DataTable is visible
+            updateTable();// Call updateTable to populate the DataTable with current points
+            map.on('moveend', updateTable);
+            map.on('layeradd', updateTable);
+            map.on('layerremove', updateTable);
+        
+// Add mouseover event to table cells
+$('#maptable tbody').on('mouseover', 'td', function() {
+  var rowData = table.row(this).data(); // Get the data for the row after sorting/filtering
+  var point = rowData[rowData.length - 1]; // Assuming the last element is the full point object
+  // Update the tooltip content dynamically based on the current row's data
+  var tooltipContent = point['Developer']; // Content to show in the tooltip  
+  // Remove any existing tooltip to prevent duplication
+  $('.custom-tooltip').remove();
+  // Create the tooltip element
+  var tooltip = $('<div class="custom-tooltip"></div>').text(tooltipContent).appendTo('body');
+  // Move the tooltip with the mouse
+  $(this).on('mousemove', function(e) {
+    tooltip.css({
+      top: e.pageY + 10 + 'px', // Positioning the tooltip below the mouse pointer
+      left: e.pageX + 10 + 'px' // Positioning the tooltip to the right of the mouse pointer
+    });
+  });
+}).on('mouseout', function() {
+  // Remove the tooltip when the mouse leaves the cell
+  $('.custom-tooltip').remove();
+});
+    
+      // Add click event to table rows
+      $('#maptable tbody').on('click', 'tr', function() {
+        var rowData = table.row(this).data(); // Get the data for the clicked row
+        var point = rowData[rowData.length - 1]; // Assuming the last element is the full point object
+        var lat = point['Latitude'];
+        var lon = point['Longitude'];
+        if (!isNaN(lat) && !isNaN(lon)) { // Check if the lat and lon are valid numbers
+          map.flyTo([lat, lon], 15, { animate: true, duration: 3 }); // Fly to the coordinates
+          drawCircle(lat, lon); // Draw a circle at the location
+        } else {
+          alert("Invalid coordinates.");
+        }
+      });
     }
+
+function drawCircle(lat, lon) {
+  // Define the circle options
+  var circleOptions = {
+      color: 'black',      // Circle color
+      fillColor: '#000',   // Fill color
+      fillOpacity: 0.1,    // Fill opacity
+      radius: 150          // Circle radius in meters
+      };
+
+  // Create the circle
+  var circle = L.circle([lat, lon], circleOptions).addTo(map);
+
+  // Return the circle object (optional)
+  return circle;}
+
+  function updateTable() {
+    var pointsVisible = [];
+    for (var i in points) {
+      if (map.hasLayer(layers[points[i].Group]) &&
+          map.getBounds().contains(L.latLng(points[i].Latitude, points[i].Longitude))) {
+        pointsVisible.push(points[i]);
+      }
+    }
+  
+    tableData = pointsToTableData(pointsVisible);
+    table.clear();
+    table.rows.add(tableData);
+    table.draw();
+  }
+  
+  function pointsToTableData(ms) {
+    var data = [];
+    for (var i in ms) {
+        var a = [];
+        for (var j in columns) {
+            a.push(ms[i][columns[j]]); // Push only the visible columns
+        }
+        a.push(ms[i]); // Push the entire point object to access later
+        data.push(a);
+    }
+    return data;
+}
+
+  function generateColumnsArray() {
+    var c = [];
+    for (var i in columns) {
+      c.push({ title: columns[i] });
+    }
+    return c;
+  }
+}}
+
+function hideTable() {
+  // Check if the DataTable is initialized
+  if ($.fn.DataTable.isDataTable('#maptable')) {
+    // Destroy the DataTable instance before hiding
+    $('#maptable').DataTable().clear().destroy();
+  }
+
+  // Hide the entire table element, including the header
+  $('#maptable').hide(); // Hide the DataTable
+
+  // Optionally, hide the header explicitly if needed
+  $('#maptable thead').hide(); // Hide the table header
+
+  $('#map').css('height', '100vh'); // Reset the map height to full screen
+}
 
     completePoints = true;
     return group;
@@ -743,7 +825,10 @@ $(window).on('load', function() {
         // Open intro popup window in the center of the map
         if (getSetting('_introPopupText') != '') {
           initIntroPopup(getSetting('_introPopupText'), map.getCenter());
-        };
+          setTimeout(function() {
+            map.closePopup();
+          }, 7000);
+        }
 
         togglePolygonLabels();
       } else {
@@ -827,7 +912,7 @@ $(window).on('load', function() {
             color: (p[index]['Color'] == '') ? 'grey' : p[index]['Color'],
             weight: trySetting('_polylinesWeight', 2),
             pane: 'shadowPane'
-          }).addTo(map);
+          });
 
           if (p[index]['Description'] && p[index]['Description'] != '') {
             line.bindPopup(p[index]['Description']);
@@ -911,7 +996,7 @@ $(window).on('load', function() {
    */
   function changeAttribution() {
     var attributionHTML = $('.leaflet-control-attribution')[0].innerHTML;
-    var credit = 'View <a href="' + 'https://www.cred-eg.com/' + '" target="_blank">data</a>';
+    var credit = 'View <a href="media/LOGO.jpg" target="_blank">data</a>';
     var name = getSetting('_authorName');
     var url = getSetting('_authorURL');
 
