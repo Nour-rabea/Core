@@ -21,8 +21,8 @@ h3 {
 
 h5 {
   margin: 0;
-  font-size: 1.1em;
-  font-weight: impact;
+  font-size: 1.0em;
+  font-weight: normal;
 }
 
 h6 {
@@ -38,7 +38,7 @@ h6 {
   box-shadow: 0 1px 5px rgb(0 0 0 / 0%);
   position: inherit;
   left: -700px;
-  top: -200px;
+  top: 50px;
 }
 
 .intro-popup .leaflet-popup-content {
@@ -71,17 +71,17 @@ form {
 }
 
 .btn {
-  border: 1px;
+  border: 0px;
   background: none;
-  padding: 10px 20px;
+  padding: 0px 0px;
   font-size: 30px;
   font-family: "Impact";
   cursor: pointer;
   margin: 10px;
-  transition: 0.8s;
+  transition: 0.12s;
   position: relative;
   overflow: hidden;
-  color: #fff;
+  color: black;
 }
 .btn:hover{
  color: #fff;
@@ -99,46 +99,59 @@ form {
  border-radius: 0% 0% 0% 0%;;
 }
 .btn:hover::before{
- height: 70%;
+ height: 100%;
 }
 
 #container {
   position: absolute;
-  top: 20px;
+  top: 10px;
   right: 20px;
   right: 3.5%;
   top: 1%;
-  padding: 10px;
+  padding: 0px;
+  padding-right: 9px;
+  padding-left: 9px;
+  padding-top: 2px;
+  padding-bottom: 3px;
   z-index: 400;
   text-align: left;
   right: 0.5%;
-  top: -2%;
-}
+  top: -0.6%;
+  }
 
-#container1 {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  right: 3.5%;
-  top: 5%;
-  padding: 10px;
-  z-index: 400;
-  text-align: left;
-  right: 0.5%;
-  top: +4%;
-}
+  /* Custom CSS to position the search control in the middle right*/
+.leaflet-control-search {
+      position: absolute;
+      top: 50%; /* Center vertically */
+      right: 5px; /* Adjust this value based on your layout */
+      transform: translateY(35%); /* Adjust the vertical position */
+  }
+  .leaflet-control-search input {
+    width: 300px; /* Set a specific width */
+    height: 40px; /* Adjust height */
+    font-size: 20px; /* Increase font size */
+    padding: 2px; /* Increase padding */
+    color: rgb(0, 0, 0);
+  }
+  .leaflet-control-search .search-button {
+    height: 30px; /* Match the height of the input */
+    font-size: 30px; /* Increase button font size */
+    padding: 0px 4px; /* Adjust button padding */
+    background-color: rgb(255, 255, 255);
+    color: white;
+  }
 
-#container2 {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  right: 3.5%;
-  top: 10%;
-  padding: 10px;
-  z-index: 400;
-  text-align: left;
-  right: 0.5%;
-  top: +10%;
+/* Customize the default tooltip appearance */
+.custom-tooltip {
+  position: absolute; /* Use absolute positioning to follow the mouse */
+  background-color: red; /* Background color of the tooltip */
+  color: white; /* Text color of the tooltip */
+  padding: 5px;
+  border-radius: 5px;
+  white-space: nowrap;
+  z-index: 1000;
+  opacity: 0.9;
+  pointer-events: none; /* Ensure the tooltip doesn't interfere with mouse events */
 }
 
 .polygons-legend-scale {
