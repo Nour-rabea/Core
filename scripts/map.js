@@ -1020,13 +1020,13 @@ function hideTable() {
    * Loads the basemap and adds it to the map
    */
   function addBaseMap() {
-    var basemap = trySetting('_tileProvider', 'CartoDB.Positron');
+    var basemap = trySetting('_tileProvider', 'Esri.WorldImagery');
     L.tileLayer.provider(basemap, {
       maxZoom: 18
     }).addTo(map);
-    L.control.attribution({
-      position: trySetting('_mapAttribution', 'bottomright')
-    }).addTo(map);
+    L.control.attribution().setPosition('bottomright').addTo(map);
+    L.control.layers(baseMaps, overlayMaps).setPosition('bottomright').addTo(map);
+    L.control.ruler(options).addTo(map);
   }
 
   /**
