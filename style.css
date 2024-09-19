@@ -13,9 +13,9 @@ body {
 }
 
 h3 {
-  padding: 5px;
+  padding: 0px 4px;
   margin: 0;
-  font-size: 3em;
+  font-size: 0em;
   font-family: impact;
 }
 
@@ -57,7 +57,7 @@ h6 {
 .leaflet-control-custom {
   padding: 6px 8px;
   background: #000000;
-  box-shadow: 0 1px 5px rgb(20 0 255 / 0%);
+  box-shadow: 0 1px 5px rgba(233, 227, 227, 0);
   color: #ffffff;
   border-radius: 5px;
 }
@@ -67,13 +67,13 @@ h6 {
 }
 
 form {
-  margin-top: px;
+  margin-top: 0px;
 }
 
 .btn {
   border: 0px;
   background: none;
-  padding: 0px 0px;
+  padding: 0px;
   font-size: 30px;
   font-family: "Impact";
   cursor: pointer;
@@ -89,13 +89,14 @@ form {
 .btn::before{
  content: "";
  position: absolute;
- left: 0;
+ left: 0px;
+ right: 0px;
  width: 100%;
  height: 0%;
- background: #b00202;
+ background: #050000;
  z-index: -1;
- transition: 0.4s;
- top: 10;
+ transition: height 0.4s;
+ top: 0px;
  border-radius: 0% 0% 0% 0%;;
 }
 .btn:hover::before{
@@ -104,25 +105,17 @@ form {
 
 #container {
   position: absolute;
-  top: 10px;
-  right: 20px;
-  right: 3.5%;
-  top: 1%;
-  padding: 0px;
-  padding-right: 9px;
-  padding-left: 9px;
-  padding-top: 2px;
-  padding-bottom: 3px;
+  top: 0%;
+  right: 0%;
+  padding: 0px 9px 0px 9px;
   z-index: 400;
   text-align: left;
-  right: 0.5%;
-  top: -0.6%;
   }
 
   /* Custom CSS to position the search control in the middle right*/
 .leaflet-control-search {
       position: absolute;
-      top: 50%; /* Center vertically */
+      top: 40%; /* Center vertically */
       right: 5px; /* Adjust this value based on your layout */
       transform: translateY(35%); /* Adjust the vertical position */
   }
@@ -131,21 +124,21 @@ form {
     height: 40px; /* Adjust height */
     font-size: 20px; /* Increase font size */
     padding: 2px; /* Increase padding */
-    color: rgb(0, 0, 0);
+    color: rgb(255, 255, 255);
   }
   .leaflet-control-search .search-button {
     height: 30px; /* Match the height of the input */
     font-size: 30px; /* Increase button font size */
     padding: 0px 4px; /* Adjust button padding */
     background-color: rgb(255, 255, 255);
-    color: white;
+    color: rgb(0, 0, 0);
   }
 
 /* Customize the default tooltip appearance */
 .custom-tooltip {
   position: absolute; /* Use absolute positioning to follow the mouse */
-  background-color: red; /* Background color of the tooltip */
-  color: white; /* Text color of the tooltip */
+  background-color: rgba(114, 4, 4, 0.801); /* Background color of the tooltip */
+  color: rgb(255, 255, 255); /* Text color of the tooltip */
   padding: 5px;
   border-radius: 5px;
   white-space: nowrap;
