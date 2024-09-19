@@ -124,7 +124,7 @@ form {
     height: 40px; /* Adjust height */
     font-size: 20px; /* Increase font size */
     padding: 2px; /* Increase padding */
-    color: rgb(255, 255, 255);
+    color: rgb(0, 0, 0);
   }
   .leaflet-control-search .search-button {
     height: 30px; /* Match the height of the input */
