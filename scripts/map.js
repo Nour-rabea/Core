@@ -125,18 +125,18 @@ $(window).on('load', function() {
           point['Icon Color']
         );
 
-      if (point.Latitude !== '' && point.Longitude !== '') {
-        var marker = L.marker([point.Latitude, point.Longitude], {icon: icon})
-          .bindPopup("<b>" + point['Project'] + '</b><br>' +
-          point['Developer'] + '</b><br>' +
-          (point['Image'] ? ('<img src="' + point['Image'] + '"><br>') : '') +
-          point['Hotline'] + '</b><br>' +
-          point['Website'] + '</b><br>' +
-          point['Brochure'] + '</b><br>' +
-          point['Head Offices'] + '</b><br>' +
-          point['Area'] + '</b> Acre <br>')
-          .bindTooltip("<b>" + point['Project'] + '</b><br>' +
-            point['Developer'], {permanent: false, direction: 'right'});
+        if (point.Latitude !== '' && point.Longitude !== '') {
+          var marker = L.marker([point.Latitude, point.Longitude], {icon: icon})
+            .bindPopup("<b>" + point['Project'] + '</b><br>' +
+            point['Developer'] + '</b><br>' +
+            (point['Image'] ? ('<img src="' + point['Image'] + '"><br>') : '') +
+            "<b>Hotline/ </b>"+ point['Hotline'] + '</b><br>' +
+            (point['Website'] ? ('<b><a href="' + point['Website'] + '" target="_blank">Website</a></b><br>') : '') +
+            point['Brochure'] + '</b><br>' +
+            "<b>Head Office/ </b>" + point['Head Offices'] + '</b><br>' +
+            point['Area'] + '</b> Acre <br>')
+            .bindTooltip("<b>" + point['Project'] + '</b><br>' +
+              point['Developer'], {permanent: false, direction: 'right'});
 
         if (layers !== undefined && layers.length !== 1) {
           marker.addTo(layers[point.Group]);
