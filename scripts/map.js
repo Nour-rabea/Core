@@ -130,12 +130,12 @@ $(window).on('load', function() {
           .bindPopup("<b>" + point['Project'] + '</b><br>' +
           point['Developer'] + '</b><br>' +
           (point['Image'] ? ('<img src="' + point['Image'] + '"><br>') : '') +
-          ///point['Hotline'] + '</b><br>' +
-          ///point['Website'] + '</b><br>' +
+          point['Hotline'] + '</b><br>' +
+          point['Website'] + '</b><br>' +
           point['Brochure'] + '</b><br>' +
-          ///point['Head Offices'] + '</b><br>' +
+          point['Head Offices'] + '</b><br>' +
           point['Area'] + '</b> Acre <br>')
-          //point['BUA'])
+        point['BUA'])
           .bindTooltip("<b>" + point['Project'] + '</b><br>' +
             point['Developer'], {permanent: false, direction: 'right'});
 
