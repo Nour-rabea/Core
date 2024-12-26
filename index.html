@@ -127,7 +127,8 @@ const searchLayer = L.geoJSON(Search, {
 const searchControl = new L.Control.Search({
   layer: searchLayer,
   zoom: "13",
-  propertyName: 'Project'
+propertyName: 'Project',
+propertyName: 'Developer'
 }).setPosition('topright');
 map.addControl(searchControl);
 map.removeLayer(searchLayer);
